@@ -58,6 +58,26 @@ export default function Hero() {
             </div>
             <figcaption className="coach-portrait__badge"><span className="coach-portrait__name">Umasivasankar</span><span className="coach-portrait__role">Founder &amp; Mentor</span></figcaption>
           </figure>
+          {/* Lightweight static embroidery (needle + silk thread + pearls) for phones, tablets and no-WebGL; hidden once 3D loads. */}
+          <svg className="hero-stitch" viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="heroNeedle" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#F1D6A6" />
+                <stop offset="0.5" stopColor="#B9844F" />
+                <stop offset="1" stopColor="#6E4824" />
+              </linearGradient>
+            </defs>
+            <path className="hero-stitch__thread" pathLength="1" d="M352 46 C 380 70, 372 130, 360 190 S 372 300, 356 360 S 330 452, 268 468" />
+            <path className="hero-stitch__zari" pathLength="1" d="M352 46 C 366 90, 382 160, 370 240 S 378 360, 352 430" />
+            <path d="M286 110 L352 44 L356 48 L290 114 Z" fill="url(#heroNeedle)" stroke="#6E4824" strokeWidth="0.6" />
+            <ellipse cx="347" cy="51" rx="4" ry="1.3" transform="rotate(-45 347 51)" fill="#FBF0E5" />
+            <g className="hero-stitch__pearls">
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+                <circle key={a} cx={32 + Math.cos((a * Math.PI) / 180) * 14} cy={250 + Math.sin((a * Math.PI) / 180) * 14} r="4.2" />
+              ))}
+              <circle className="hero-stitch__bead" cx="32" cy="250" r="5.5" />
+            </g>
+          </svg>
           {load3D && (
             <SceneBoundary>
               <Suspense fallback={<span className="stitch-loader hero-scene__loader" aria-hidden="true" />}>

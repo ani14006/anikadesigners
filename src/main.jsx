@@ -1,13 +1,23 @@
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import App from './App';
+// Self-hosted fonts (same families/weights as before; unicode-range subsets load on demand).
+import '@fontsource/playfair-display/500.css';
+import '@fontsource/playfair-display/600.css';
+import '@fontsource/playfair-display/700.css';
+import '@fontsource/playfair-display/800.css';
+import '@fontsource/playfair-display/500-italic.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/600.css';
+import '@fontsource/dm-sans/700.css';
 import './styles/base.css';
 import './styles/enhance.css';
 
 const root = document.getElementById('root');
 const app = (
   <StrictMode>
-    <App />
+    <App pathname={window.location.pathname} />
   </StrictMode>
 );
 

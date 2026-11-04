@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CircleAlert, CircleCheck, Send } from 'lucide-react';
 import { JOURNEY_STAGES } from '../content';
 import { SITE_CONFIG } from '../config';
+import { track } from '../analytics';
 
 const MESSAGES = {
   sent: 'Thank you! Your enquiry has been sent. Our team will get back to you soon.',
@@ -22,14 +23,27 @@ function buildText(data) {
   ].filter(Boolean).join('\n');
 }
 
+const clean = (v) => String(v ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim();
+
 export default function Contact() {
   const [status, setStatus] = useState('idle');
+  // Spam protection: a hidden honeypot field plus a minimum time on the form.
+  const [openedAt] = useState(() => Date.now());
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     if (!form.checkValidity()) { form.reportValidity(); return; }
-    const data = Object.fromEntries(new FormData(form).entries());
+    const raw = Object.fromEntries(new FormData(form).entries());
+    if (raw.company || Date.now() - openedAt < 2500) {
+      // Likely automated: drop silently. Humans never see or fill the hidden field.
+      console.warn('[contact] submission blocked by spam protection');
+      return;
+    }
+    const data = {
+      name: clean(raw.name), email: clean(raw.email), whatsapp: clean(raw.whatsapp),
+      stage: clean(raw.stage), message: clean(raw.message),
+    };
     const { formEndpoint, whatsappNumber, email } = SITE_CONFIG;
 
     if (formEndpoint) {
@@ -43,6 +57,7 @@ export default function Contact() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         form.reset();
         setStatus('sent');
+        track('generate_lead', { method: 'form', journey_stage: data.stage || 'not_given' });
       } catch (err) {
         console.error('[contact] submission failed:', err);
         setStatus('error');
@@ -52,11 +67,13 @@ export default function Contact() {
     if (whatsappNumber) {
       window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(buildText(data))}`, '_blank', 'noopener');
       setStatus('whatsapp');
+      track('generate_lead', { method: 'whatsapp', journey_stage: data.stage || 'not_given' });
       return;
     }
     if (email) {
       window.location.href = `mailto:${email}?subject=${encodeURIComponent('AAH Enquiry')}&body=${encodeURIComponent(buildText(data))}`;
       setStatus('email');
+      track('generate_lead', { method: 'email', journey_stage: data.stage || 'not_given' });
       return;
     }
     console.warn('[contact] No enquiry channel configured. Set formEndpoint, whatsappNumber or email in src/config.js.');
@@ -79,17 +96,17 @@ export default function Contact() {
           <div className="contact__row">
             <div className="field">
               <label htmlFor="name">Name</label>
-              <input type="text" id="name" name="name" placeholder="Your name" autoComplete="name" required />
+              <input type="text" id="name" name="name" placeholder="Your name" autoComplete="name" required maxLength={100} />
             </div>
             <div className="field">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email" required />
+              <input type="email" id="email" name="email" placeholder="you@example.com" autoComplete="email" required maxLength={254} />
             </div>
           </div>
           <div className="contact__row">
             <div className="field">
               <label htmlFor="whatsapp">WhatsApp Number</label>
-              <input type="tel" id="whatsapp" name="whatsapp" placeholder="+91 00000 00000" autoComplete="tel" />
+              <input type="tel" id="whatsapp" name="whatsapp" placeholder="+91 00000 00000" autoComplete="tel" inputMode="tel" maxLength={20} pattern="[+0-9 ()-]{7,20}" title="Digits, spaces and + only" />
             </div>
             <div className="field">
               <label htmlFor="stage">Where are you currently in your Aari journey?</label>
@@ -101,8 +118,13 @@ export default function Contact() {
           </div>
           <div className="field">
             <label htmlFor="message">Message</label>
-            <textarea id="message" name="message" rows="4" placeholder="Tell us what you would like help with..." />
+            <textarea id="message" name="message" rows="4" placeholder="Tell us what you would like help with..." maxLength={2000} />
           </div>
+          <div className="contact__hp" aria-hidden="true">
+            <label htmlFor="company">Company</label>
+            <input type="text" id="company" name="company" tabIndex={-1} autoComplete="off" />
+          </div>
+          <p className="contact__privacy">By sending this enquiry you agree to us using your details to respond, as described in our <a href="/privacy-policy/">Privacy Policy</a>.</p>
           <button type="submit" className="btn btn--primary contact__submit" disabled={sending} aria-busy={sending}>
             {sending
               ? <><span className="stitch-loader stitch-loader--light" aria-hidden="true" /> Sending…</>

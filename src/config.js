@@ -10,8 +10,14 @@ export const SITE_CONFIG = {
   formEndpoint: '',
   whatsappNumber: '',
   email: '',
+  // Google Analytics 4 measurement ID, e.g. 'G-XXXXXXXXXX'. Empty = no analytics and no cookie banner.
+  // Analytics loads only after the visitor accepts in the cookie banner.
+  ga4MeasurementId: '',
+  // Google Search Console HTML-tag verification token (the content="..." value). Empty = not added.
+  // DNS (TXT record) verification is preferred for a Domain property and needs no code change.
+  googleSiteVerification: '',
   social: {
-    instagram: '',
-    youtube: '',
+    instagram: 'https://www.instagram.com/anika.designers/',
+    youtube: 'https://www.youtube.com/@anikadesigners',
   },
 };
