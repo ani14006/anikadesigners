@@ -1,6 +1,7 @@
 import { BUSINESS } from '../business';
 import { SITE_CONFIG } from '../config';
 import { openCookieSettings } from '../analytics';
+import Logo from '../components/Logo';
 
 const B = BUSINESS;
 const R = BUSINESS.refund;
@@ -8,6 +9,7 @@ const G = BUSINESS.grievanceOfficer;
 
 /** Renders a business fact, or a clearly visible marker when it has not been provided yet. */
 function V({ value, label }) {
+  if (value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return <a href={`mailto:${value}`}>{value}</a>;
   if (value) return <>{value}</>;
   return <mark className="policy-missing" title="This detail has not been provided yet">[To be provided: {label}]</mark>;
 }
@@ -15,15 +17,14 @@ function V({ value, label }) {
 const operator = (
   <>
     <V value={B.legalName} label="registered legal name of the business owner / entity" />
-    {B.entityType ? `, a ${B.entityType}` : null}, operating under the name {B.tradeName}
+    {B.entityType ? `, a ${B.entityType}` : null}
   </>
 );
 
 const contactLines = (
   <ul>
-    <li>Email: <V value={B.email} label="support email" /></li>
-    <li>Phone / WhatsApp: <V value={B.phone} label="support phone number" /></li>
-    <li>Address: <V value={B.address} label="registered / communication address" /></li>
+    <li>Email: {B.email ? <a href={`mailto:${B.email}`}>{B.email}</a> : <V value="" label="support email" />}</li>
+    <li>Phone / WhatsApp: {B.phone ? <><a href={`tel:${B.phone.replace(/\s/g, '')}`}>{B.phone}</a> (<a href={`https://wa.me/${B.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">chat on WhatsApp</a>)</> : <V value="" label="support phone number" />}</li>
   </ul>
 );
 
@@ -60,7 +61,7 @@ export function PrivacyPolicy() {
       {contactLines}
 
       <h2>2. What personal data we collect</h2>
-      <p><strong>Information you give us through the enquiry form:</strong> your name, email address, WhatsApp number (optional), the stage of your Aari journey (optional) and any message you write.</p>
+      <p><strong>Information you send us when you contact us:</strong> when you email us at <a href={`mailto:${B.email}`}>{B.email}</a> or message us on WhatsApp or social media, we receive your name, contact details and whatever you choose to write.</p>
       <p><strong>Information you give us when you enrol in a program:</strong> details needed to register you, deliver the program and communicate with you. Payment details are handled by our payment provider; we do not store your card or bank details on this website.</p>
       <p><strong>Website usage information (only with your consent):</strong> if you accept analytics cookies, Google Analytics collects information such as pages visited, approximate location (city/region), device and browser type, and which buttons you clicked. See our <a href="/cookie-policy/">Cookie Policy</a>.</p>
       <p><strong>Technical information:</strong> like every website, the service that hosts this site (GitHub Pages) receives your IP address and browser details in order to send the page to you.</p>
@@ -77,22 +78,18 @@ export function PrivacyPolicy() {
       </ul>
 
       <h2>4. Consent and how to withdraw it</h2>
-      <p>By submitting the enquiry form you consent to us using the details you provide for the purposes above. Analytics cookies are used only if you choose “Accept” in the cookie banner.</p>
+      <p>By contacting us you consent to us using the details you provide for the purposes above. Analytics cookies are used only if you choose “Accept” in the cookie banner.</p>
       <p>You can withdraw your consent at any time, as easily as you gave it: email us at <V value={B.email} label="support email" />, or for analytics use the{' '}
         <button type="button" className="policy-link-button" onClick={openCookieSettings}>Cookie settings</button> control. Withdrawal does not affect processing already carried out, and we may still keep data where the law requires it.</p>
 
-      <h2>5. How your enquiry reaches us</h2>
-      <p>Depending on how our contact form is set up, your enquiry is sent to us through one of: a form-processing service, WhatsApp (your WhatsApp app opens with the message pre-filled and you choose whether to send it), or your own email app. When WhatsApp or email is used, that service’s own privacy policy also applies.</p>
-      {SITE_CONFIG.formEndpoint && <p>Our form-processing service receives the details you enter on our behalf and is bound to use them only to deliver them to us.</p>}
+      <h2>5. How your messages reach us</h2>
+      <p>This website does not have a contact form and does not store anything you type. Links such as “Explore Program” open your own email app addressed to us; you decide whether to send the message. Messages sent through email, WhatsApp, Instagram or YouTube are also subject to those services’ own privacy policies.</p>
 
       <h2>6. Who we share data with</h2>
-      <p>We do not sell your personal data. We share it only with service providers who help us run AAH (for example: hosting, form delivery, messaging, payment processing and Google Analytics), and only as much as they need. We may also disclose data when required by law, a court or a government authority.</p>
+      <p>We do not sell your personal data. We share it only with service providers who help us run AAH (for example: hosting, email, messaging, payment processing and Google Analytics), and only as much as they need. We may also disclose data when required by law, a court or a government authority.</p>
       <p>Some of these providers may store data outside India. Where this happens, we rely on transfers that are permitted under Indian law.</p>
 
-      <h2>7. How long we keep it</h2>
-      <p>We keep enquiry details for as long as needed to respond and follow up, and enrolment records for as long as you have access to a program and afterwards as required for accounting, tax and legal purposes. When data is no longer needed, we delete or anonymise it. <V value="" label="specific retention periods (e.g. enquiries: 12 months; student records: X years)" /></p>
-
-      <h2>8. Your rights</h2>
+      <h2>7. Your rights</h2>
       <p>Subject to the DPDP Act and applicable rules, you have the right to:</p>
       <ul>
         <li>ask for a summary of the personal data we hold about you and how we use it;</li>
@@ -103,17 +100,17 @@ export function PrivacyPolicy() {
       </ul>
       <p>If you are not satisfied with our response, you may approach the Data Protection Board of India once it is available to receive complaints.</p>
 
-      <h2>9. Children</h2>
+      <h2>8. Children</h2>
       <p>Our programs and this website are intended for adults (18 years and above). If you are under 18, please ask a parent or lawful guardian to contact us on your behalf; we will process a minor’s data only with verifiable consent from a parent or guardian.</p>
 
-      <h2>10. Security</h2>
+      <h2>9. Security</h2>
       <p>We use reasonable security practices to protect your data, including encrypted (HTTPS) connections, limiting access to people who need it, and using reputable service providers. No method of transmission or storage is completely secure, so we cannot guarantee absolute security. If a personal data breach affects you, we will inform you and the authorities as required by law.</p>
 
-      <h2>11. Changes to this policy</h2>
+      <h2>10. Changes to this policy</h2>
       <p>We may update this policy from time to time. The “Last updated” date above shows when it was last changed. Significant changes will be highlighted on this website.</p>
 
-      <h2>12. Contact</h2>
-      <p>For questions or requests about your personal data, contact our Grievance Officer: <V value={G.name} label="Grievance Officer name" />, <V value={G.email} label="Grievance Officer email" />.</p>
+      <h2>11. Contact</h2>
+      <p>For support, questions about your personal data, or to exercise any of your rights, email us at <a href={`mailto:${B.email}`}>{B.email}</a>.</p>
     </PolicyLayout>
   );
 }
@@ -131,11 +128,11 @@ export function TermsPage() {
       <p>Program descriptions on this website are a general overview. The exact content, schedule, duration, format (recorded, live or both), fees and access period of each program will be shared with you before you pay. Your enrolment is confirmed only when we receive full payment (or the agreed instalment) and send you a confirmation.</p>
 
       <h2>3. Fees and payment</h2>
-      <p>Fees are payable in Indian Rupees through the payment methods we share with you (<V value={R.paymentModes} label="accepted payment methods / payment provider" />). Prices are inclusive or exclusive of GST as stated at the time of payment.{B.gstin ? ` Our GSTIN is ${B.gstin}.` : null}</p>
+      <p>Fees are payable in Indian Rupees through <V value={R.paymentModes} label="accepted payment methods" />. Please share your payment confirmation with us so we can activate your membership. Prices are inclusive or exclusive of GST as stated at the time of payment.{B.gstin ? ` Our GSTIN is ${B.gstin}.` : null}</p>
 
       <h2>4. Access to programs</h2>
       <ul>
-        <li>Access to program content is for your personal use only and is valid for <V value={R.accessDuration} label="access duration" />.</li>
+        <li>Access to program content is for your personal use only. What you can access, and for how long, depends on your membership plan, as confirmed when you enrol.</li>
         <li>Login details, recordings, notes, patterns and community groups must not be shared, resold, recorded, downloaded (unless downloading is expressly permitted) or distributed.</li>
         <li>We may suspend or end access without refund if these Terms are misused, for example by sharing content or behaving abusively in the community.</li>
         <li>Live sessions: <V value={R.liveSessionPolicy} label="policy on missed live sessions, recordings and batch changes" /></li>
@@ -160,10 +157,13 @@ export function TermsPage() {
       <p>To the extent permitted by law, AAH is not liable for indirect or consequential losses, including loss of business or income, arising from use of the website or a program. Our total liability for any claim relating to a program is limited to the fee you paid for that program. Nothing in these Terms limits any rights you have as a consumer under Indian law.</p>
 
       <h2>11. Governing law and disputes</h2>
-      <p>These Terms are governed by the laws of India. Please first contact us through the <a href="/contact-grievance/">Grievance Redressal</a> process so we can try to resolve the issue. Subject to your rights under the Consumer Protection Act, 2019, the courts at <V value={B.jurisdictionCity} label="city for jurisdiction" /> shall have jurisdiction.</p>
+      <p>These Terms are governed by the laws of India. Please first contact us through the <a href="/contact-grievance/">Grievance Redressal</a> process so we can try to resolve the issue. Subject to your rights under the Consumer Protection Act, 2019, the courts in <V value={B.jurisdiction} label="jurisdiction" /> shall have jurisdiction.</p>
 
       <h2>12. Changes</h2>
       <p>We may update these Terms. Changes apply from the “Last updated” date and do not affect programs already purchased unless the change is required by law.</p>
+
+      <h2>13. Contact</h2>
+      <p>Questions about these Terms? Email us at <a href={`mailto:${B.email}`}>{B.email}</a>.</p>
     </PolicyLayout>
   );
 }
@@ -231,7 +231,7 @@ export function CookiePolicy() {
       <p>All fonts and images are served from our own website; no third-party content is loaded unless you accept analytics. If you accept analytics, Google’s privacy policy also applies to data collected by Google Analytics.</p>
 
       <h2>5. More information</h2>
-      <p>See our <a href="/privacy-policy/">Privacy Policy</a> for how we handle personal data.</p>
+      <p>See our <a href="/privacy-policy/">Privacy Policy</a> for how we handle personal data. Questions about cookies? Email us at <a href={`mailto:${B.email}`}>{B.email}</a>.</p>
     </PolicyLayout>
   );
 }
@@ -253,6 +253,9 @@ export function Disclaimer() {
 
       <h2>5. External links</h2>
       <p>Links to other websites or apps (such as WhatsApp, Instagram or YouTube) are provided for convenience. We are not responsible for their content or privacy practices.</p>
+
+      <h2>6. Contact</h2>
+      <p>Questions about this disclaimer? Email us at <a href={`mailto:${B.email}`}>{B.email}</a>.</p>
     </PolicyLayout>
   );
 }
@@ -268,7 +271,7 @@ export function ContactGrievance() {
       {contactLines}
       <p>Support hours: <V value={B.supportHours} label="support hours" /></p>
       {B.gstin && <p>GSTIN: {B.gstin}</p>}
-      <p>For program enquiries you can also use the <a href="/#contact">enquiry form</a>.</p>
+      <p>For program enquiries, email <a href={`mailto:${B.email}`}>{B.email}</a>.</p>
 
       <h2>2. Grievance Officer</h2>
       <p>In accordance with the Consumer Protection (E-Commerce) Rules, 2020, the Information Technology Act, 2000 and the Digital Personal Data Protection Act, 2023, our Grievance Officer is:</p>
@@ -296,6 +299,7 @@ export function NotFound() {
   return (
     <section className="policy policy--404">
       <div className="container policy__inner" style={{ textAlign: 'center' }}>
+        <Logo size={88} className="notfound__mark" />
         <p className="eyebrow">Page not found</p>
         <h1 className="section-title">This thread seems to have come loose.</h1>
         <p className="policy__intro">The page you were looking for doesn’t exist or may have moved.</p>

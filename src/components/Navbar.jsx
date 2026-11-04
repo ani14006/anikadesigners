@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NAV_LINKS } from '../content';
+import Logo from './Logo';
 
 export default function Navbar({ isHome = true }) {
   // On the legal pages, section links point back to the home page.
@@ -53,7 +54,7 @@ export default function Navbar({ isHome = true }) {
   return (
     <header className={`navbar${scrolled ? ' scrolled' : ''}`} id="navbar">
       <div className="container navbar__inner">
-        <a href={isHome ? '#home' : '/'} className="navbar__logo" aria-label="AAH – Aari Embroidery Artist Hub, home">AAH<span className="navbar__logo-sub">Aari Embroidery Artist Hub</span></a>
+        <a href={isHome ? '#home' : '/'} className="navbar__logo" aria-label="AAH – Aari Embroidery Artist Hub, home"><Logo size={46} className="navbar__mark" /><span className="navbar__logo-text">AAH<span className="navbar__logo-sub">Aari Embroidery Artist Hub</span></span></a>
 
         <nav className="navbar__links" id="navLinks" aria-label="Primary">
           {NAV_LINKS.map((l) => (

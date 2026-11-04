@@ -33,7 +33,7 @@ const org = {
   name: BUSINESS.brandName,
   alternateName: [BUSINESS.tradeName, 'AAH'],
   url: `${SITE_URL}/`,
-  logo: `${SITE_URL}/icon-512.png`,
+  logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-512.png`, width: 512, height: 512 },
   image: `${SITE_URL}/assets/og-image.jpg`,
   description: HOME_META.description,
   founder: { '@type': 'Person', name: BUSINESS.founder },

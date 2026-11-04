@@ -3,6 +3,9 @@ import { ArrowRight } from 'lucide-react';
 import { BENEFITS, PROGRAMS, RESULTS, STATS, STORIES, VOICES } from '../content';
 import { Floral, Paisley } from './Ornaments';
 import { useReducedMotion } from '../hooks';
+import { BUSINESS } from '../business';
+
+const enquiryMail = (program) => `mailto:${BUSINESS.email}?subject=${encodeURIComponent(`Enquiry about ${program}`)}`;
 
 const d = (i, step = 90) => ({ '--d': `${i * step}ms` });
 
@@ -132,7 +135,7 @@ export function Programs() {
                   : <p key={b.flow} className="program-card__flow">{b.flow}</p>
               )}
               <span className="program-card__for">{p.bestFor}</span>
-              <a href="#contact" className="program-card__link">
+              <a href={enquiryMail(p.title)} className="program-card__link">
                 {p.link} <ArrowRight className="program-card__arrow" size={16} strokeWidth={2.2} aria-hidden="true" />
               </a>
             </article>

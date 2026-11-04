@@ -1,15 +1,13 @@
 /*
- * Enquiry + social settings. Fill these in before going live.
- * The contact form uses the first channel that is configured, in this order:
- *   1. formEndpoint   – e.g. a Formspree / Getform URL that accepts JSON POSTs
- *   2. whatsappNumber – international format, digits only, e.g. '919876543210'
- *   3. email          – opens the visitor's mail app with the enquiry pre-filled
- * If none are set, the form tells the visitor it is unavailable instead of faking success.
+ * Contact + social settings.
+ *   whatsappNumber – international format, digits only, e.g. '919876543210' (enables the footer WhatsApp link)
+ *   email          – support email, set in src/business.js
  */
+import { BUSINESS } from './business';
+
 export const SITE_CONFIG = {
-  formEndpoint: '',
-  whatsappNumber: '',
-  email: '',
+  whatsappNumber: '918526214202',
+  email: BUSINESS.email, // support email (set in src/business.js)
   // Google Analytics 4 measurement ID, e.g. 'G-XXXXXXXXXX'. Empty = no analytics and no cookie banner.
   // Analytics loads only after the visitor accepts in the cookie banner.
   ga4MeasurementId: '',

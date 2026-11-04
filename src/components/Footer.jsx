@@ -3,6 +3,9 @@ import { SITE_CONFIG } from '../config';
 import { POLICY_ROUTES } from '../routes';
 import { analyticsEnabled, openCookieSettings } from '../analytics';
 import { InstagramIcon, WhatsAppIcon, YouTubeIcon } from './SocialIcons';
+import { Mail } from 'lucide-react';
+import Logo from './Logo';
+import { BUSINESS } from '../business';
 
 const FOOTER_LABELS = { '#about': 'About AAH', '#results': 'Student Results', '#testimonials': 'Success Stories' };
 
@@ -18,6 +21,7 @@ export default function Footer({ isHome = true }) {
     <footer className="footer">
       <div className="container footer__grid">
         <div className="footer__brand">
+          <Logo size={64} className="footer__mark" alt="Anika Designers logo" />
           <span className="footer__logo">AAH</span>
           <span className="footer__logo-sub">Aari Embroidery Artist Hub</span>
           <p>Empowering women to transform creativity into confident, profitable home-based businesses through skills, mentorship and community.</p>
@@ -33,7 +37,7 @@ export default function Footer({ isHome = true }) {
           {FOOTER_PROGRAMS.map((p) => <a key={p} href={to('#programs')}>{p}</a>)}
         </nav>
 
-        <div className="footer__social">
+        <div className="footer__social" id="contact">
           <h2 className="footer__heading">Connect</h2>
           <div className="footer__social-icons">
             {socials.map((s) => (
@@ -48,6 +52,10 @@ export default function Footer({ isHome = true }) {
               </a>
             ))}
           </div>
+          <a className="footer__email" href={`mailto:${BUSINESS.email}`}>
+            <Mail size={17} strokeWidth={2} aria-hidden="true" />
+            <span>{BUSINESS.email}</span>
+          </a>
         </div>
       </div>
 
